@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "currencyAlerts",
+	"webDir": "www",
+	"bundledWebRuntime": false
+}

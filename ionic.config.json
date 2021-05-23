@@ -1,0 +1,7 @@
+{
+  "name": "currencyAlerts",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
