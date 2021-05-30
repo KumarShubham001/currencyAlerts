@@ -24,3 +24,22 @@
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
+
+.customModal {
+  &.bottomHalfModal {
+    // padding-top: 95%;
+
+    .modal-wrapper.ion-overlay-wrapper {
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+
+      position: absolute;
+      bottom: 0px;
+      height: 280px;
+
+      .ion-page {
+        padding: 30px 15px;
+      }
+    }
+  }
+}

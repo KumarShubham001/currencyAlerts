@@ -1,0 +1,48 @@
+.no-data-error {
+  height: 100%;
+  width: 100%;
+
+  .image-container {
+    width: 100%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 30%;
+
+    img {
+      width: 180px;
+      height: 180px;
+    }
+  }
+
+  .errorMsg {
+    text-align: center;
+    margin-top: 30px;
+
+    h3 {
+      margin: 0px;
+      text-transform: capitalize;
+    }
+
+    p {
+      margin: 9px;
+      font-size: 0.85em;
+      text-transform: capitalize;
+
+      margin-bottom: 30px;
+
+      // span.link {
+      //   text-decoration: underline;
+      //   color: blue;
+      //   cursor: pointer;
+
+      //   &:hover,
+      //   &:active {
+      //     text-decoration: dashed;
+      //   }
+      // }
+    }
+  }
+}

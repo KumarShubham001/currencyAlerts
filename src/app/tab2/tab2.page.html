@@ -1,17 +1,94 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Tab 2
+      Currency Prices
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 2</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)" pullFactor="0.5" pullMin="100" pullMax="200">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
 
-  <app-explore-container name="Tab 2 page"></app-explore-container>
+  <ion-toolbar>
+    <ion-segment [value]="currSegment" (ionChange)="segmentChanged($event)" [swipeGesture]="swipeAllowed">
+      <ion-segment-button value="all">All</ion-segment-button>
+      <ion-segment-button value="favorites">Favorites</ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+
+  <ng-container *ngIf="currSegment == 'all'">
+    <ng-container *ngIf="!error && contentLoaded">
+      <ion-searchbar (ionInput)="updateResult($event)"></ion-searchbar>
+      <ion-list *ngFor="let item of filteredList">
+        <ion-item (click)="showModal(item)">
+          <ion-ripple-effect></ion-ripple-effect>
+          <ion-label>{{ item.name }}</ion-label>
+          <span class="itemPrice"><i class="fa fa-inr" aria-hidden="true"></i>{{ item.sell | number: '1.0-4' }}
+            <span class="perChangeContainer">
+              <span class="perChange"
+                [ngClass]="item.status">{{ (item.day_percentage_change)?item.day_percentage_change:'0' }}%</span>
+            </span>
+          </span>
+        </ion-item>
+      </ion-list>
+    </ng-container>
+    <ng-container *ngIf="error">
+      <div class="no-data-error">
+        <div class="image-container">
+          <img src="assets/images/server_error.svg">
+          <div class="errorMsg">
+            <h3>Oops</h3>
+            <p>Something Wrong!</p>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+  <ng-container *ngIf="currSegment == 'favorites'">
+    <ng-container *ngIf="!error && contentLoaded">
+      <ng-container *ngIf="favouriteList && favouriteList.length > 0">
+        <ion-list>
+          <ng-container *ngFor="let item of filteredList">
+            <ng-container *ngIf="favouriteList.includes(item.name)">
+              <ion-item (click)="showModal(item)">
+                <ion-ripple-effect></ion-ripple-effect>
+                <ion-label>{{ item.name }}</ion-label>
+                <span class="itemPrice"><i class="fa fa-inr" aria-hidden="true"></i>{{ item.sell | number: '1.0-4' }}
+                  <span class="perChangeContainer">
+                    <span class="perChange"
+                      [ngClass]="item.status">{{ (item.day_percentage_change)?item.day_percentage_change:'0' }}%</span>
+                  </span>
+                </span>
+              </ion-item>
+            </ng-container>
+          </ng-container>
+        </ion-list>
+      </ng-container>
+      <ng-container *ngIf="favouriteList && favouriteList.length <= 0">
+        <div class="no-data-error">
+          <div class="image-container">
+            <img src="assets/images/no_data.svg">
+            <div class="errorMsg">
+              <h3>Oops</h3>
+              <p>Nothing here!</p>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <ng-container *ngIf="error">
+      <div class="no-data-error">
+        <div class="image-container">
+          <img src="assets/images/server_error.svg">
+          <div class="errorMsg">
+            <h3>Oops</h3>
+            <p>Something Wrong!</p>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
 </ion-content>

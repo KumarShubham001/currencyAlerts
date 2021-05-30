@@ -1,0 +1,56 @@
+.itemPrice {
+  margin-bottom: 15px;
+
+  &>i {
+    margin-right: 3px;
+  }
+
+  .danger {
+    color: red;
+  }
+
+  .success {
+    color: green;
+  }
+
+  .perChangeContainer {
+    margin-left: 10px;
+
+    &>i {
+      margin-right: 5px;
+    }
+  }
+}
+
+.customInput {
+  margin: 30px 0px;
+
+  .customInputLabel {
+    font-size: 0.85em;
+  }
+}
+
+.custom-button {
+  position: absolute;
+  width: calc(100% - 30px);
+  bottom: 15px;
+}
+
+.section-header {
+  .flex {
+    display: flex;
+    align-items: center;
+
+    &.space-between {
+      justify-content: space-between;
+    }
+  }
+
+  h2 {
+    margin: 0px;
+  }
+
+  i {
+    font-size: 20px;
+  }
+}

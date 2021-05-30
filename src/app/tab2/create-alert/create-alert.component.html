@@ -1,0 +1,28 @@
+<div>
+  <div class="section-header">
+    <div class="flex space-between">
+      <h2>{{ currency.name }}</h2>
+      <i (click)="updateFav()" class="fa" aria-hidden="true" [ngClass]="(favourite)?'fa-heart':'fa-heart-o'"></i>
+    </div>
+    <hr>
+  </div>
+  <div class="main-container">
+    <span class="itemPrice"><i class="fa fa-inr" aria-hidden="true"></i>{{ currency.sell | number: '1.0-4' }}
+      <span class="perChangeContainer">
+        <i class="fa" [ngClass]="currency.status=='danger' ? 'fa-caret-down danger' : 'fa-caret-up success'"></i>
+        <span class="perChange"
+          [ngClass]="currency.status">{{ (currency.day_percentage_change)?currency.day_percentage_change:'0' }}%</span>
+      </span>
+    </span>
+    <form [formGroup]="alertForm" (ngSubmit)="formSubmitEvent()">
+      <ion-item class="customInput ionicInput">
+        <ion-label class="customInputLabel" position="floating">Target Price</ion-label>
+        <ion-input formControlName="alertInput" (input)="valueChanged($event)" type="number">
+        </ion-input>
+      </ion-item>
+      <ion-button type="submit" [disabled]="okButtonDisabled" class="custom-button" expand="block">SET
+        ALERT
+      </ion-button>
+    </form>
+  </div>
+</div>
