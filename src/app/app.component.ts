@@ -23,7 +23,8 @@ import { BackgroundMode } from '@ionic-native/background-mode/ngx';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  marketDetailsList: any;
+  marketListOld: any;
+  marketList: any;
   _storage: any;
   alertList: any;
   getMarketDetailsSub: Subscription;
@@ -46,31 +47,29 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.coinService.updateINRMarketDetails();
 
-    this.alertService.alert('hi1', 'hello1');
-
     // check for android or web-browser
     if (this.platform.is('hybrid')) {
       // override the back button of the android device to move the app in the background rather than closing it
       this.backgroundMode.overrideBackButton();
 
       this.initStorage().then((e) => {
+        this.getMarketDetailsSub = this.fieldService
+          .getMarketDetails()
+          .subscribe((res) => {
+            if (res) {
+              this.marketList = res;
+            }
+          });
+
         this.fetchInterval = setInterval(() => {
-          if (this.getMarketDetailsSub) this.getMarketDetailsSub.unsubscribe();
+          this._storage.get(LOCALSTORAGE.ALERT_LIST).then((alertList) => {
+            if (alertList) {
+              this.alertList = JSON.parse(alertList);
 
-          this.getMarketDetailsSub = this.fieldService
-            .getMarketDetails()
-            .subscribe((marketList) => {
-              if (marketList) {
-                this._storage.get(LOCALSTORAGE.ALERT_LIST).then((alertList) => {
-                  if (alertList) {
-                    this.alertList = JSON.parse(alertList);
-
-                    this.checkValidity({ ...marketList });
-                  }
-                });
-              }
-            });
-        }, 2000);
+              this.checkValidity({ ...this.marketList });
+            }
+          });
+        }, 500);
       });
 
       App.addListener('appStateChange', async ({ isActive }) => {
@@ -86,48 +85,46 @@ export class AppComponent implements OnInit {
           // BackgroundTask.finish({ taskId });
 
           clearInterval(this.fetchInterval);
+          this.getMarketDetailsSub.unsubscribe();
+
+          this.getMarketDetailsSub = this.fieldService
+            .getMarketDetails()
+            .subscribe((res) => {
+              if (res) {
+                this.marketList = res;
+              }
+            });
 
           this.fetchInterval = setInterval(() => {
-            if (this.getMarketDetailsSub)
-              this.getMarketDetailsSub.unsubscribe();
+            this._storage.get(LOCALSTORAGE.ALERT_LIST).then((alertList) => {
+              if (alertList) {
+                this.alertList = JSON.parse(alertList);
 
-            this.getMarketDetailsSub = this.fieldService
-              .getMarketDetails()
-              .subscribe((marketList) => {
-                if (marketList) {
-                  this._storage
-                    .get(LOCALSTORAGE.ALERT_LIST)
-                    .then((alertList) => {
-                      if (alertList) {
-                        this.alertList = JSON.parse(alertList);
-
-                        this.checkValidity({ ...marketList });
-                      }
-                    });
-                }
-              });
-          }, 3000);
+                this.checkValidity({ ...this.marketList });
+              }
+            });
+          }, 500);
         });
       });
     } else {
       this.initStorage().then((e) => {
+        this.getMarketDetailsSub = this.fieldService
+          .getMarketDetails()
+          .subscribe((res) => {
+            if (res) {
+              this.marketList = res;
+            }
+          });
+
         this.fetchInterval = setInterval(() => {
-          if (this.getMarketDetailsSub) this.getMarketDetailsSub.unsubscribe();
+          this._storage.get(LOCALSTORAGE.ALERT_LIST).then((alertList) => {
+            if (alertList) {
+              this.alertList = JSON.parse(alertList);
 
-          this.getMarketDetailsSub = this.fieldService
-            .getMarketDetails()
-            .subscribe((marketList) => {
-              if (marketList) {
-                this._storage.get(LOCALSTORAGE.ALERT_LIST).then((alertList) => {
-                  if (alertList) {
-                    this.alertList = JSON.parse(alertList);
-
-                    this.checkValidity({ ...marketList });
-                  }
-                });
-              }
-            });
-        }, 2000);
+              this.checkValidity({ ...this.marketList });
+            }
+          });
+        }, 500);
       });
     }
 
@@ -141,53 +138,52 @@ export class AppComponent implements OnInit {
 
   checkValidity(list: any) {
     // create array
-    const currencyList: any = [];
-    for (let key in list) {
-      currencyList.push({
-        ...list[key],
-        name: key,
-      });
-    }
+    // const currencyList: any = [];
+    // for (let key in list) {
+    //   currencyList.push({
+    //     ...list[key],
+    //     name: key,
+    //   });
+    // }
 
     this.alertList.forEach((alert) => {
       // alert past price
-      const pastPrice = this.marketDetailsList
-        ? this.marketDetailsList.filter(
-            (item) => item.name == alert.currency
-          )[0].sell
-        : 0;
-
-      const currPrice = currencyList.filter(
-        (item) => item.name == alert.currency
-      )[0].sell;
+      const pastPrice = Number(
+        this.marketListOld ? this.marketListOld[alert.currency].sell : 0
+      );
+      const currPrice = Number(list[alert.currency].sell);
 
       if (
-        (Number(pastPrice) < Number(alert.target) &&
-          Number(alert.target) < Number(currPrice)) ||
-        (Number(pastPrice) > Number(alert.target) &&
-          Number(alert.target) > Number(currPrice))
+        (pastPrice < alert.target && alert.target <= currPrice) ||
+        (pastPrice > alert.target && alert.target >= currPrice)
       ) {
-        if (this.currNotification != alert.currency) {
-          // show alert
+        // if (this.currNotification != alert.currency) {
+        //   this.alertService.isAllowedNotification().then((e) => {
+        //     if (e.display != 'granted') {
+        //       this.alertService.requestPermission().then((e) => {
+        //         this.notify(alert);
+        //       });
+        //     } else {
+        //       this.notify(alert);
+        //     }
+        //   });
+        //   this.currNotification = alert.currency;
+        // }
 
-          this.alertService.isAllowedNotification().then((e) => {
-            if (e.display != 'granted') {
-              this.alertService.requestPermission().then((e) => {
-                console.log(e);
-                this.notify(alert);
-              });
-            } else {
+        this.alertService.isAllowedNotification().then((e) => {
+          if (e.display != 'granted') {
+            this.alertService.requestPermission().then((e) => {
               this.notify(alert);
-            }
-          });
-
-          this.currNotification = alert.currency;
-        }
+            });
+          } else {
+            this.notify(alert);
+          }
+        });
       }
     });
 
     // update the past list with current details for next iteration
-    this.marketDetailsList = [...currencyList];
+    this.marketListOld = { ...list };
   }
 
   notify(alert) {
