@@ -1,24 +1,28 @@
 import { Injectable } from '@angular/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
-// import { Plugins } from '@capacitor/core';
-// const { LocalNotifications } = Plugins;
+import { Platform } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AlertService {
-  channelName: string;
-  constructor() {
-    LocalNotifications.createChannel({
-      id: 'CurrencyAlerts',
-      name: 'CurrencyAlerts',
-      importance: 5,
-      description: 'Currency alerts',
-      sound: 'notification.mp3',
-      visibility: 1,
-      vibration: true,
-      lights: true,
-    });
+  channelId: string = null;
+
+  constructor(private platform: Platform) {
+    if (platform.is('hybrid')) {
+      this.channelId = String(Date.now());
+
+      LocalNotifications.createChannel({
+        id: this.channelId,
+        name: 'CurrencyAlerts',
+        importance: 5,
+        description: 'Currency alerts',
+        sound: 'notification.mp3',
+        visibility: 1,
+        vibration: true,
+        lights: true,
+      });
+    }
   }
 
   async requestPermission() {
@@ -39,12 +43,10 @@ export class AlertService {
           body: body,
           id: randomId,
           schedule: { at: new Date(Date.now() + 500) },
-          // sound: null,
           attachments: null,
           actionTypeId: '',
           extra: null,
-          smallIcon: 'drawable-hdpi-icon',
-          channelId: 'CurrencyAlerts',
+          channelId: this.channelId,
         },
       ],
     });
