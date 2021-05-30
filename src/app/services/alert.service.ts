@@ -19,7 +19,7 @@ export class AlertService {
       vibration: true,
       lights: true,
     });
-  } 
+  }
 
   async requestPermission() {
     await LocalNotifications.requestPermissions();

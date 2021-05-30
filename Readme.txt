@@ -16,3 +16,19 @@ Add android {
     }
 
 in build.gradle under android folder
+
+4. For notification icon
+visit https://romannurik.github.io/AndroidAssetStudio/icons-notification.html
+
+upload svg with padding 15% and download the zip
+extract the zip and copy the icon inside drawable-xxxhdpi to android\app\src\main\res\drawable
+
+Add
+"plugins": {
+		"LocalNotifications": {
+			"smallIcon": "ic_stat_onesignal_default"
+		}
+	}
+in capacitor.config.json
+
+restart the project
