@@ -137,15 +137,6 @@ export class AppComponent implements OnInit {
   }
 
   checkValidity(list: any) {
-    // create array
-    // const currencyList: any = [];
-    // for (let key in list) {
-    //   currencyList.push({
-    //     ...list[key],
-    //     name: key,
-    //   });
-    // }
-
     this.alertList.forEach((alert) => {
       // alert past price
       const pastPrice = Number(
@@ -154,22 +145,10 @@ export class AppComponent implements OnInit {
       const currPrice = Number(list[alert.currency].sell);
 
       if (
-        (pastPrice < alert.target && alert.target <= currPrice) ||
-        (pastPrice > alert.target && alert.target >= currPrice)
+        pastPrice != 0 &&
+        ((pastPrice < alert.target && alert.target <= currPrice) ||
+          (pastPrice > alert.target && alert.target >= currPrice))
       ) {
-        // if (this.currNotification != alert.currency) {
-        //   this.alertService.isAllowedNotification().then((e) => {
-        //     if (e.display != 'granted') {
-        //       this.alertService.requestPermission().then((e) => {
-        //         this.notify(alert);
-        //       });
-        //     } else {
-        //       this.notify(alert);
-        //     }
-        //   });
-        //   this.currNotification = alert.currency;
-        // }
-
         this.alertService.isAllowedNotification().then((e) => {
           if (e.display != 'granted') {
             this.alertService.requestPermission().then((e) => {

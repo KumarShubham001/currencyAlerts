@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   // serviceURL: 'http://192.168.29.250:5000',
-  serviceURL: 'https://currency-alerts-app.herokuapp.com/',
+  serviceURL: 'https://currency-alerts-app.herokuapp.com',
 };
 
 /*
